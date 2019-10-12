@@ -91,11 +91,17 @@ class Operator():
 
 class DomainListener(pddlListener):
     def __init__(self):
+        self.context = {}
         self.typesdef = False
         self.objects = {}
         self.operators = {}
         self.scopes = []
         self.negativescopes = []
+
+    def exitNamespaceBinding(self, ctx):
+        #print(ctx)
+        #print("{} - {}".format(ctx.name(), ctx.URI()))
+        self.context[ctx.name().getText()] = ctx.URI().getText()
 
     def enterActionDef(self, ctx):
         opname = ctx.actionSymbol().getText()
@@ -216,10 +222,16 @@ class DomainListener(pddlListener):
 class ProblemListener(pddlListener):
 
     def __init__(self):
+        self.context = {}
         self.objects = {}
         self.initialstate = []
         self.goals = []
         self.scopes = []
+
+    def exitNamespaceBinding(self, ctx):
+        #print(ctx)
+        #print("{} - {}".format(ctx.name(), ctx.URI()))
+        self.context[ctx.name().getText()] = ctx.URI().getText()
 
     def enterInit(self, ctx):
         self.scopes.append(Scope())
@@ -359,6 +371,16 @@ class DomainProblem():
         expanded = [ [ (vname, symb) for symb in d[vname] ] for vname in d ]
         # cartesian product.
         return itertools.product(*expanded)
+
+    def domain_context(self):
+        """Returns a dict of linked context.
+        """
+        return self.domain.context
+
+    def problem_context(self):
+        """Returns a dict of linked context.
+        """
+        return self.problem.context
 
     def initialstate(self):
         """Returns a set of atoms (tuples of strings) corresponding to the intial
