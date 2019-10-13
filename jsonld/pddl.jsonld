@@ -1,0 +1,6 @@
+{
+ "@context": {
+   "pddl": "uri:pddlont.owl#",
+   "pddl-da": "uri:pddlont2.1.owl#"
+ }
+}

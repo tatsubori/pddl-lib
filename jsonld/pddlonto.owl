@@ -1,0 +1,523 @@
+<?xml version='1.0' encoding='ISO-8859-1'?> 
+<!DOCTYPE rdf:RDF [ 
+         <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'> 
+         <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'> 
+         <!ENTITY owl 'http://www.w3.org/2002/07/owl#'> 
+         <!ENTITY xsd 'http://www.w3.org/2001/XMLSchema#'> 
+         <!ENTITY ruleml 'http://www.w3.org/2003/11/swrl#'> 
+         <!ENTITY swrl 'http://www.w3.org/2003/11/swrl#'> 
+         <!ENTITY drs 'http://www.cs.yale.edu/homes/dvm/daml/drsonto.owl#'> 
+         <!ENTITY pddl 'http://www.cs.yale.edu/homes/dvm/daml/pddlonto.owl#'> 
+]> 
+
+<rdf:RDF 
+  xmlns:rdf ="&rdf;" 
+  xmlns:rdfs="&rdfs;" 
+  xmlns:    ="&owl;" 
+  xmlns:owl ="&owl;" 
+  xmlns:xsd ="&xsd;" 
+  xmlns:drs ="&drs;" 
+  xmlns:swrl="&swrl;" 
+  xmlns:pddl="&pddl;"
+> 
+
+
+<Ontology rdf:about="">
+   <versionInfo>$Id: pddlont.owl, v1.0.0 2004/01/05 03:00:00 ddj Exp$</versionInfo>
+   <rdfs:comment>
+      This ontology describes symbols and relations in PDDL.
+   </rdfs:comment>
+   <rdfs:label>
+      Planning Domain Definition Language Ontology.
+   </rdfs:label>
+   <imports rdf:resource="http://www.w3.org/2002/07/owl"/>
+   <imports rdf:resource="http://www.cs.yale.edu/~dvm/daml/drsonto.owl"/>
+</Ontology>
+
+<!-- The basic definition is for pddl domain -->
+
+<Class rdf:ID="Domain">
+   <rdfs:comment>
+      The class of domain definition
+   </rdfs:comment>
+</Class>
+
+<ObjectProperty rdf:ID="extends">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Extended_domain_seq"/>
+</ObjectProperty>
+
+<Class rdf:ID="Extended_domain_seq">
+    <rdfs:comment>
+      The list of Domain(s)
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="#Domain"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Extended_domain_seq"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<ObjectProperty rdf:ID="requirements">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Require-keys_bag"/>
+</ObjectProperty>
+
+<Class rdf:ID="Require-key_bag">
+   <rdfs:comment>
+      The list of require-key(s) as Literal
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="&rdfs;Literal"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Require-key_bag"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<ObjectProperty rdf:ID="types">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Type_seq"/>
+</ObjectProperty>
+
+<Class rdf:ID="Type_seq">
+    <rdfs:comment>
+      The list of Type(s)
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="&drs;Type"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Type_seq"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+
+<ObjectProperty rdf:ID="constants">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="&drs;Constant_bag"/>
+</ObjectProperty>
+
+<Class rdf:ID="Object">
+   <rdfs:comment>
+      The super class for all objects
+   </rdfs:comment>
+</Class>
+
+<Class rdf:ID="Obj">
+   <rdfs:comment>
+      Same as Object
+   </rdfs:comment>
+</Class>
+
+<Class rdf:ID="Physob">
+   <rdfs:subClassOf rdf:resource="#Object"/>
+</Class>
+
+<Class rdf:ID="String">
+   <rdfs:subClassOf rdf:resource="#Object"/>
+   <equivalentClass rdf:resource="&rdfs;Literal"/>
+</Class>
+
+<Class rdf:ID="Number">
+   <rdfs:subClassOf rdf:resource="#Object"/>
+</Class>
+
+<Class rdf:ID="Integer">
+   <rdfs:subClassOf rdf:resource="#Number"/>
+</Class>
+
+<Class rdf:ID="Float">
+   <rdfs:subClassOf rdf:resource="#Number"/>
+</Class>
+
+<Class rdf:ID="?u">
+   <rdfs:comment>
+      an object with unknown type
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="#Object"/>
+</Class>
+
+<ObjectProperty rdf:ID="predicates">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Predicate_bag"/>
+</ObjectProperty>
+
+<Class rdf:ID="Predicate_bag">
+    <rdfs:comment>
+      The list of Predicate(s)
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="#Predicate"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Predicate_bag"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<Class rdf:ID="Predicate"> 
+   <rdfs:subClassOf rdf:resource="&drs;Function"/> 
+   <rdfs:subClassOf> 
+      <Restriction> 
+         <onProperty rdf:resource="&drs;function_range"/> 
+         <hasValue rdf:resource="&drs;Prop"/> 
+      </Restriction> 
+   </rdfs:subClassOf> 
+</Class> 
+
+<ObjectProperty rdf:ID="functions">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Function_bag"/>
+</ObjectProperty>
+
+<Class rdf:ID="Function_bag">
+   <rdfs:comment>
+      The list of Function(s)
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="&drs;Function"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Function_bag"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<!-- One important definition in domain is action definition -->
+
+<ObjectProperty rdf:ID="action-def">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Action"/>
+</ObjectProperty>
+
+
+<Class rdf:ID="Action">
+   <rdfs:comment>
+      The class of action definition
+   </rdfs:comment>
+</Class>
+
+<ObjectProperty rdf:ID="parameters">
+   <rdfs:domain resource="#Action"/>
+   <rdfs:range resource="#Param_seq"/>
+</ObjectProperty>
+
+<Class rdf:ID="Param">
+   <rdfs:subClassOf rdf:resource="&swrl;Variable"/>
+</Class>
+
+
+<Class rdf:ID="Param_seq">
+   <rdfs:comment>
+      The list of Parameter(s)
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="#Param"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Param_seq"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<ObjectProperty rdf:ID="value">
+   <rdfs:domain resource="#Action"/>
+   <rdfs:range resource="#Value"/>
+</ObjectProperty>
+
+<Class rdf:ID="Value">
+   <rdfs:subClassOf rdf:resource="&swrl;Variable"/>
+</Class>
+
+
+<ObjectProperty rdf:ID="vars">
+   <rdfs:domain resource="#Action"/>
+   <rdfs:range resource="&drs;Var_bag"/>
+</ObjectProperty>
+
+
+<ObjectProperty rdf:ID="precondition">
+   <rdfs:domain resource="#Action"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+<Class rdf:ID="Fluent-test">
+   <rdfs:comment>
+      The class of fluent-test definition
+   </rdfs:comment>
+    <rdfs:subClassOf rdf:resource="&drs;Formula"/>
+</Class>
+
+
+<ObjectProperty rdf:ID="expression-def">
+   <rdfs:domain resource="#Fluent-test"/>
+   <rdfs:range resource="#Expression"/>
+</ObjectProperty>
+
+<Class rdf:ID="Expression">
+   <rdfs:subClassOf rdf:resource="&drs;Formula"/>
+</Class>
+
+<Class rdf:ID="Function">
+   <rdfs:comment>
+      The class of pddl function definition used in Evaluation contexts
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&drs;Function"/>
+</Class>
+
+<!-- Sometime we use expansion inside of action definition -->
+
+<ObjectProperty rdf:ID="expansion">
+   <rdfs:domain resource="#Action"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+<Class rdf:ID="In-context">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Series">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Parallel">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Choice">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Forsome">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Foreach">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Constrained">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Change">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+<Class rdf:ID="Action-label_name">
+   <rdfs:subClassOf rdf:resource="&drs;Literal"/>
+</Class>
+
+<ObjectProperty rdf:ID="action-label">
+   <rdfs:domain resource="#Action-label_name"/>
+   <rdfs:range resource="&rdfs;Literal"/>
+</ObjectProperty>
+
+<Class rdf:ID="Action-def_body">
+   <rdfs:comment>
+      The class of pddl action-def_body definition
+   </rdfs:comment>
+</Class>
+
+<ObjectProperty rdf:ID="maintain">
+   <rdfs:domain resource="#Action-def_body"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+
+<ObjectProperty rdf:ID="effect">
+   <rdfs:domain resource="#Action"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+<Class rdf:ID="When">
+   <rdfs:subClassOf rdf:resource="&drs;Connective_formula"/>
+</Class>
+
+
+<!-- Sometime we use axiom definition for domain -->
+
+
+<ObjectProperty rdf:ID="axiom-def">
+   <rdfs:domain resource="#Domain"/>
+   <rdfs:range resource="#Axiom"/>
+</ObjectProperty>
+
+<Class rdf:ID="Axiom">
+   <rdfs:comment>
+      The class of axiom definition
+   </rdfs:comment>
+</Class>
+
+<ObjectProperty rdf:ID="axiom_vars">
+   <rdfs:domain resource="#Axiom"/>
+   <rdfs:range resource="&drs;Var_bag"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="implies">
+   <rdfs:domain resource="#Axiom"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="context">
+   <rdfs:domain resource="#Axiom"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+
+
+<!-- After define domain, we can define situation and problem -->
+
+<Class rdf:ID="Situation">
+   <rdfs:comment>
+      The class of situation definition
+   </rdfs:comment>
+</Class>
+
+<ObjectProperty rdf:ID="situation_domain">
+   <rdfs:domain resource="#Situation"/>
+   <rdfs:range resource="#Domain"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="objects">
+   <rdfs:domain resource="#Situation"/>
+   <rdfs:range resource="#Object_bag"/>
+</ObjectProperty>
+
+<Class rdf:ID="ObjectTerm">
+   <rdfs:subClassOf rdf:resource="&drs;Term"/>
+</Class>
+
+<Class rdf:ID="Object_bag">
+   <rdfs:comment>
+      The list of Object Term
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="#ObjectTerm"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Object_bag"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<ObjectProperty rdf:ID="facts">
+   <rdfs:domain resource="#Situation"/>
+   <rdfs:range resource="#Atomic_formula_bag"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="init">
+   <rdfs:domain resource="#Situation"/>
+   <rdfs:range resource="#Atomic_formula_bag"/>
+</ObjectProperty>
+
+<Class rdf:ID="Atomic_formula_bag">
+   <rdfs:comment>
+      The list of Atomic formula(s)
+   </rdfs:comment>
+   <rdfs:subClassOf rdf:resource="&rdf;List"/>
+   <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;first"/> 
+      <allValuesFrom rdf:resource="&drs;Atomic_formula"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+  <rdfs:subClassOf> 
+    <Restriction> 
+      <onProperty rdf:resource="&rdf;rest"/> 
+      <allValuesFrom rdf:resource="#Atomic_formula_bag"/> 
+    </Restriction> 
+  </rdfs:subClassOf> 
+</Class>
+
+<!-- Use problem definition, we can give out a planning problem-->
+
+<Class rdf:ID="Problem">
+   <rdfs:comment>
+      The class of problem definition
+   </rdfs:comment>
+</Class>
+
+<ObjectProperty rdf:ID="problem_domain">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="#Domain"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="require-def">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="#Require-key_bag"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="problem_situation">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="#Situation"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="objects">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="#Object_bag"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="init">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="#Atomic_formula_bag"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="goal">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="&drs;Formula"/>
+</ObjectProperty>
+
+<ObjectProperty rdf:ID="length">
+   <rdfs:domain resource="#Problem"/>
+   <rdfs:range resource="&rdfs;Literal"/>
+</ObjectProperty>
+
+</rdf:RDF>
